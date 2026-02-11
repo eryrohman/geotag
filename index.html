@@ -3,122 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotag Pro - Auto Filename & Address</title>
-    
+    <title>Geotag Pro V4 - Logo & Direct Download</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
     <style>
-        #map { height: 350px; width: 100%; border-radius: 12px; z-index: 1; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #map { height: 300px; width: 100%; border-radius: 12px; z-index: 1; }
+        .preview-item img { height: 80px; width: 80px; object-fit: cover; border-radius: 8px; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen pb-10">
+<body class="bg-gray-50 min-h-screen pb-10">
 
-    <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="max-w-5xl mx-auto px-4 py-8">
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-black text-slate-800 tracking-tight">📸 GEOTAG PRO V1</h1>
-            <p class="text-slate-500">Watermark Alamat Lengkap & Rename File Otomatis</p>
-            <a href="https://wa.me/6285216064485">Oleh Ery Rohmansyah</a>
+            <h1 class="text-3xl font-black text-blue-800">📸 GEOTAG PRO V4</h1>
+            <p class="text-gray-600">Watermark Alamat, Logo Instansi & Rename Otomatis</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <div class="lg:col-span-5 space-y-6">
-                
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <span class="bg-blue-600 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs">1</span>
-                        Input Data & Foto
-                    </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                    <h2 class="font-bold border-b pb-2 text-gray-700">1. Pengaturan File & Logo</h2>
                     
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-xs font-bold text-slate-400 uppercase">Pilih Gambar (JPEG/PNG)</label>
-                            <input type="file" id="fileInput" multiple accept="image/*" class="w-full mt-1 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                        </div>
-                        
-                        <div>
-                            <label class="text-xs font-bold text-slate-400 uppercase">Tanggal & Waktu Pengambilan</label>
-                            <input type="datetime-local" id="dateInput" class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase">Pilih Foto (Bisa banyak)</label>
+                        <input type="file" id="fileInput" multiple accept="image/*" class="block w-full text-sm mt-1">
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <label class="text-xs font-bold text-blue-600 uppercase">Upload Logo Instansi (PNG Transparan Disarankan)</label>
+                        <input type="file" id="logoInput" accept="image/*" class="block w-full text-sm mt-1">
+                        <div id="logoPreviewArea" class="mt-2 hidden">
+                            <img id="imgLogoThumb" class="h-12 w-auto border rounded bg-white p-1">
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <span class="bg-blue-600 text-white w-6 h-6 flex items-center justify-center rounded-full text-xs">2</span>
-                        Lokasi & Alamat
-                    </h2>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                    <h2 class="font-bold border-b pb-2 text-gray-700">2. Waktu & Lokasi</h2>
+                    <input type="datetime-local" id="dateInput" class="w-full p-2 border rounded-lg">
                     
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="addressSearch" placeholder="Cari nama tempat/jalan..." class="flex-grow p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-400 outline-none">
-                        <button onclick="searchAddress()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-black transition">Cari</button>
+                    <div class="flex gap-2">
+                        <input type="text" id="addressSearch" placeholder="Cari lokasi..." class="flex-grow p-2 border rounded-lg text-sm">
+                        <button onclick="searchAddress()" class="bg-blue-600 text-white px-4 rounded-lg hover:bg-blue-700">Cari</button>
                     </div>
-
-                    <div id="map" class="mb-4 border shadow-inner"></div>
-
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <input type="text" id="lat" readonly placeholder="Lat" class="bg-slate-50 p-2 border rounded text-xs text-center font-mono">
-                        <input type="text" id="lng" readonly placeholder="Lng" class="bg-slate-50 p-2 border rounded text-xs text-center font-mono">
+                    <div id="map"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="lat" readonly class="bg-gray-100 p-2 border rounded text-xs font-mono">
+                        <input type="text" id="lng" readonly class="bg-gray-100 p-2 border rounded text-xs font-mono">
                     </div>
-                    
-                    <label class="text-xs font-bold text-slate-400 uppercase">Alamat Lengkap</label>
-                    <textarea id="fullAddress" rows="3" class="w-full mt-1 p-2 border rounded-lg text-xs bg-slate-50" placeholder="Klik pada peta untuk mendapatkan alamat..."></textarea>
+                    <textarea id="fullAddress" rows="3" class="w-full p-2 border rounded-lg text-xs" placeholder="Alamat lengkap..."></textarea>
                 </div>
 
-                <button onclick="processImages()" id="btnProcess" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex justify-center items-center gap-3">
-                    🚀 PROSES & DOWNLOAD ZIP
+                <button onclick="processImages()" id="btnProcess" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all">
+                    💾 PROSES & DOWNLOAD GAMBAR
                 </button>
             </div>
 
-            <div class="lg:col-span-7 space-y-4">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[500px]">
-                    <div class="flex justify-between items-center mb-6 border-b pb-4">
-                        <h2 class="font-bold text-slate-700">Preview & Penamaan File</h2>
-                        <span id="statusCount" class="text-xs font-bold bg-slate-100 text-slate-500 px-3 py-1 rounded-full uppercase">0 Files</span>
-                    </div>
-                    
-                    <div id="previewList" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="col-span-full text-center py-20 text-slate-300">
-                            <p class="text-4xl mb-2">📥</p>
-                            <p>Belum ada gambar dipilih</p>
-                        </div>
-                    </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <h2 class="font-bold border-b pb-4 text-gray-700 flex justify-between">
+                    Antrian Foto <span id="fileCount" class="text-blue-600">0</span>
+                </h2>
+                <div id="previewList" class="mt-4 space-y-2 max-h-[700px] overflow-y-auto">
+                    <p class="text-center text-gray-400 py-20 italic">Belum ada file dipilih</p>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <script>
-        // --- INISIALISASI PETA ---
         let map = L.map('map').setView([-6.2000, 106.8166], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         let marker = L.marker([-6.2000, 106.8166], {draggable: true}).addTo(map);
 
-        // Default Tanggal (WIB)
+        let instansiLogo = null;
+
+        // Load Logo Instansi
+        document.getElementById('logoInput').onchange = function(e) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    instansiLogo = img;
+                    document.getElementById('imgLogoThumb').src = ev.target.result;
+                    document.getElementById('logoPreviewArea').classList.remove('hidden');
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        // Set Date Default
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('dateInput').value = now.toISOString().slice(0, 16);
 
-        // Update Lokasi & Alamat
         async function updateLocation(lat, lng) {
             marker.setLatLng([lat, lng]);
             document.getElementById('lat').value = lat.toFixed(6);
             document.getElementById('lng').value = lng.toFixed(6);
-            
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-                const data = await response.json();
-                document.getElementById('fullAddress').value = data.display_name || "Alamat tidak ditemukan";
-            } catch (err) {
-                console.error("Gagal mengambil alamat");
-            }
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                const data = await res.json();
+                document.getElementById('fullAddress').value = data.display_name || "";
+            } catch (err) {}
         }
 
         map.on('click', (e) => updateLocation(e.latlng.lat, e.latlng.lng));
@@ -130,71 +119,58 @@
                 .then(res => res.json())
                 .then(data => {
                     if(data.length > 0) {
-                        const pos = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+                        const pos = [data[0].lat, data[0].lon];
                         map.setView(pos, 16);
-                        updateLocation(pos[0], pos[1]);
+                        updateLocation(parseFloat(pos[0]), parseFloat(pos[1]));
                     }
                 });
         }
 
-        // --- PREVIEW HANDLER ---
-        document.getElementById('fileInput').addEventListener('change', function() {
+        document.getElementById('fileInput').onchange = function() {
             const list = document.getElementById('previewList');
-            const files = this.files;
-            document.getElementById('statusCount').innerText = `${files.length} Files`;
             list.innerHTML = "";
-            
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const div = document.createElement('div');
-                    div.className = "bg-slate-50 p-2 rounded-lg border border-slate-200 text-center shadow-sm";
-                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-32 object-cover rounded mb-2">
-                                     <p class="text-[10px] text-slate-500 truncate">${file.name}</p>`;
-                    list.appendChild(div);
-                };
-                reader.readAsDataURL(file);
+            document.getElementById('fileCount').innerText = this.files.length;
+            Array.from(this.files).forEach(file => {
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-4 p-2 border-b text-xs text-gray-500";
+                div.innerHTML = `<span>📄</span> <span class="truncate">${file.name}</span>`;
+                list.appendChild(div);
             });
-        });
+        };
 
-        // --- CORE PROCESSING ---
         async function processImages() {
             const files = document.getElementById('fileInput').files;
             const lat = document.getElementById('lat').value;
             const lng = document.getElementById('lng').value;
             const addr = document.getElementById('fullAddress').value;
-            const rawDate = document.getElementById('dateInput').value; // 2023-10-27T14:30
+            const dateInput = document.getElementById('dateInput').value;
             
-            if (files.length === 0 || !lat) return alert("Lengkapi data foto dan lokasi!");
+            if (files.length === 0) return alert("Pilih foto!");
 
             const btn = document.getElementById('btnProcess');
-            btn.innerText = "🔄 Sedang Memproses...";
+            btn.innerText = "⏳ Memproses...";
             btn.disabled = true;
 
-            const zip = new JSZip();
-            
-            // Format Penamaan File: YYYYMMDD_HHMMSS_Lat_Lng
-            const datePart = rawDate.replace(/[-T:]/g, ''); 
-            const coordPart = `${lat.replace('.', 'd')}_${lng.replace('.', 'd')}`;
+            const dateFile = dateInput.replace(/[-T:]/g, '');
+            const coordFile = `${lat.replace('.', 'd')}_${lng.replace('.', 'd')}`;
 
             for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const processedImg = await drawWatermark(file, addr, lat, lng, rawDate.replace('T', ' '));
+                const imgData = await drawWatermark(files[i], addr, lat, lng, dateInput.replace('T', ' '));
                 
-                // Nama File Baru
-                const finalFileName = `${datePart}_${coordPart}_${i+1}.jpg`;
+                // Download Langsung per file
+                const newName = `${dateFile}_${coordFile}_${i+1}.jpg`;
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = newName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
                 
-                const base64Content = processedImg.split(',')[1];
-                zip.file(finalFileName, base64Content, {base64: true});
+                // Delay kecil agar browser tidak memblokir multiple download
+                await new Promise(r => setTimeout(r, 500));
             }
 
-            const content = await zip.generateAsync({type: "blob"});
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(content);
-            link.download = `GEOTAG_${datePart}.zip`;
-            link.click();
-
-            btn.innerText = "🚀 PROSES & DOWNLOAD ZIP";
+            btn.innerText = "💾 PROSES & DOWNLOAD GAMBAR";
             btn.disabled = false;
         }
 
@@ -207,52 +183,42 @@
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
                         
-                        // Gunakan resolusi asli namun batasi max width untuk stabilitas
-                        const MAX_WIDTH = 2500;
-                        let width = img.width;
-                        let height = img.height;
+                        // Batasi resolusi agar proses cepat
+                        const scale = 1800 / Math.max(img.width, img.height);
+                        canvas.width = (scale < 1) ? img.width * scale : img.width;
+                        canvas.height = (scale < 1) ? img.height * scale : img.height;
 
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        const fontSize = Math.round(canvas.width * 0.02);
+                        const padding = canvas.width * 0.02;
+                        const lineHeight = fontSize * 1.5;
+
+                        // Bungkus teks alamat
+                        const wrappedAddr = wrapText(ctx, `Alamat: ${address}`, canvas.width - (padding * 2.5) - (instansiLogo ? fontSize*4 : 0), fontSize);
+                        const lines = [`Tgl: ${date}`, `Koordinat: ${lat}, ${lng}`, ...wrappedAddr];
+
+                        // Box Watermark
+                        const boxHeight = (lines.length * lineHeight) + (padding * 2);
+                        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+                        ctx.fillRect(0, canvas.height - boxHeight, canvas.width, boxHeight);
+
+                        // Gambar Logo Instansi jika ada
+                        if (instansiLogo) {
+                            const logoSize = boxHeight * 0.8;
+                            ctx.drawImage(instansiLogo, padding, canvas.height - boxHeight + (boxHeight - logoSize)/2, logoSize, logoSize);
                         }
 
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // Style Watermark
-                        const fontSize = Math.round(width * 0.022);
-                        const padding = width * 0.02;
-                        ctx.font = `bold ${fontSize}px sans-serif`;
-                        
-                        const lines = [
-                            `WAKTU: ${date}`,
-                            `LOKASI: ${lat}, ${lng}`,
-                            `ALAMAT: ${address}`
-                        ];
-
-                        // Bungkus teks alamat agar tidak keluar layar
-                        const wrappedAddress = wrapText(ctx, `ALAMAT: ${address}`, width - (padding * 2));
-                        const finalLines = [lines[0], lines[1], ...wrappedAddress];
-
-                        // Draw Background Box
-                        const lineHeight = fontSize * 1.4;
-                        const boxHeight = (finalLines.length * lineHeight) + (padding * 2);
-                        
-                        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-                        ctx.fillRect(0, height - boxHeight, width, boxHeight);
-                        
-                        // Draw Text
+                        // Teks Watermark
                         ctx.fillStyle = "white";
-                        ctx.shadowColor = "black";
-                        ctx.shadowBlur = 4;
+                        ctx.font = `bold ${fontSize}px sans-serif`;
+                        const textX = instansiLogo ? (padding * 2) + (boxHeight * 0.8) : padding;
                         
-                        finalLines.forEach((line, idx) => {
-                            ctx.fillText(line, padding, (height - boxHeight) + padding + (idx * lineHeight) + fontSize);
+                        lines.forEach((line, idx) => {
+                            ctx.fillText(line, textX, (canvas.height - boxHeight) + padding + (idx * lineHeight) + fontSize);
                         });
-                        
-                        resolve(canvas.toDataURL('image/jpeg', 0.85));
+
+                        resolve(canvas.toDataURL('image/jpeg', 0.9));
                     };
                     img.src = e.target.result;
                 };
@@ -260,27 +226,23 @@
             });
         }
 
-        // Helper fungsi untuk memotong teks alamat jika terlalu panjang
-        function wrapText(ctx, text, maxWidth) {
+        function wrapText(ctx, text, maxWidth, fSize) {
+            ctx.font = `bold ${fSize}px sans-serif`;
             const words = text.split(' ');
             const lines = [];
             let currentLine = words[0];
-
             for (let i = 1; i < words.length; i++) {
-                const word = words[i];
-                const width = ctx.measureText(currentLine + " " + word).width;
-                if (width < maxWidth) {
-                    currentLine += " " + word;
+                if (ctx.measureText(currentLine + " " + words[i]).width < maxWidth) {
+                    currentLine += " " + words[i];
                 } else {
                     lines.push(currentLine);
-                    currentLine = word;
+                    currentLine = words[i];
                 }
             }
             lines.push(currentLine);
             return lines;
         }
 
-        // Jalankan koordinat default
         updateLocation(-6.2000, 106.8166);
     </script>
 </body>
